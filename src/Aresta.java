@@ -1,15 +1,24 @@
-package GrafoBig.src;
-
 public class Aresta {
     private int distancia;
-    private Vertice origem;
-    private Vertice chegada;
+    private  Vertice origem;
+    private  Vertice chegada;
+
 
     public Aresta(int distancia, Vertice origem, Vertice chegada) {
         this.distancia = distancia;
         this.origem = origem;
         this.chegada = chegada;
     }
+
+    public Aresta(int distancia, String origemVertice) {
+
+    }
+
+
+    public void setDistancia(int distancia) {
+        this.distancia = distancia;
+    }
+
 
     public int getDistancia() {
         return distancia;

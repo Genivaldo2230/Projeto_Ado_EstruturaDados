@@ -1,5 +1,3 @@
-package GrafoBig.src;
-
 import java.util.*;
 
 public class Grafo {
@@ -9,39 +7,40 @@ public class Grafo {
         vertices = new ArrayList<>();
     }
 
-    public void adicionaVertice(String nome) {
+    public Vertice adicionaVertice(String nome) {
         Vertice vertice = new Vertice(nome);
         vertices.add(vertice);
+        return vertice;
     }
 
     public void adicionaAresta(int distancia, String nomeOrigem, String nomeDestino) {
-        Vertice origem = encontraVertice(nomeOrigem);
-        Vertice destino = encontraVertice(nomeDestino);
+        Vertice origem = adicionaVertice(nomeOrigem);
+        Vertice destino = adicionaVertice(nomeDestino);
         Aresta aresta = new Aresta(distancia, origem, destino);
         origem.getArestas().add(aresta);
     }
 
-    public void removeVertice(String nome) {
-        Vertice vertice = encontraVertice(nome);
+    public Vertice removeVertice(String nome) {
+        Vertice vertice = removeVertice(nome);
         vertices.remove(vertice);
 
         for (Vertice v : vertices) {
             List<Aresta> arestas = v.getArestas();
             arestas.removeIf(a -> a.getOrigem() == vertice || a.getDestino() == vertice);
         }
+        return vertice;
     }
 
     public void removeAresta(String nomeOrigem, String nomeDestino) {
-        Vertice origem = encontraVertice(nomeOrigem);
-        Vertice destino = encontraVertice(nomeDestino);
+        Vertice origem = removeVertice(nomeOrigem);
+        Vertice destino = removeVertice(nomeDestino);
         origem.getArestas().removeIf(a -> a.getDestino() == destino);
     }
-
     public void traçarRota(String origem, String destino) {
-        Vertice origemVertice = encontraVertice(origem);
-        Vertice destinoVertice = encontraVertice(destino);
+        Vertice origemVertice = adicionaVertice(origem);
+        Vertice destinoVertice = adicionaVertice(destino);
 
-        if (origemVertice == null || destinoVertice == null) {
+        if (origemVertice == destinoVertice || destinoVertice == origemVertice) {
             System.out.println("Origem ou destino inválido.");
             return;
         }
@@ -55,7 +54,7 @@ public class Grafo {
             predecessores.put(v, null);
         }
 
-        filaPrioridade.add(new Aresta(0, null, origemVertice));
+        filaPrioridade.add(new Aresta(0,  "origemVertice"));
 
         while (!filaPrioridade.isEmpty()) {
             Aresta arestaAtual = filaPrioridade.poll();
@@ -92,7 +91,6 @@ public class Grafo {
             return;
         }
 
-        int temp = 0;
         System.out.println("Rota encontrada: ");
         for (int i = 0; i < caminho.size() - 1; i++) {
             Vertice atual = caminho.get(i);
@@ -107,11 +105,10 @@ public class Grafo {
 
             for (Aresta a : atual.getArestas()) {
                 if (a.getDestino() != null && a.getDestino().equals(proximo)) {
-                    temp += a.getDistancia();
                     System.out.print(atual.getNome() + " -> ");
                     encontrada = true;
                     if (proximo.getNome().contains(destino)) {
-                        System.out.print(proximo.getNome() + " [ Distancia: " + temp + "m ]");
+                        System.out.print(proximo.getNome());
                     }
                     break;
                 }
@@ -121,7 +118,10 @@ public class Grafo {
                 System.out.println("Não foi encontrada uma aresta entre " + atual.getNome() + " e " + proximo.getNome());
             }
         }
+
+        System.out.println("Distância total percorrida: " + distanciaMinima.get(destinoVertice) + "m");
     }
+
 
     private Vertice encontraVertice(String nome) {
         for (Vertice v : vertices) {
