@@ -8,8 +8,11 @@ public class Grafo {
     }
 
     public Vertice adicionaVertice(String nome) {
-        Vertice vertice = new Vertice(nome);
-        vertices.add(vertice);
+        Vertice vertice = encontraVertice(nome);
+        if (vertice == null) {
+            vertice = new Vertice(nome);
+            vertices.add(vertice);
+        }
         return vertice;
     }
 
@@ -21,21 +24,24 @@ public class Grafo {
     }
 
     public Vertice removeVertice(String nome) {
-        Vertice vertice = removeVertice(nome);
-        vertices.remove(vertice);
-
-        for (Vertice v : vertices) {
-            List<Aresta> arestas = v.getArestas();
-            arestas.removeIf(a -> a.getOrigem() == vertice || a.getDestino() == vertice);
+        Vertice vertice = encontraVertice(nome);
+        if (vertice != null) {
+            vertices.remove(vertice);
+            for (Vertice v : vertices) {
+                v.getArestas().removeIf(a -> a.getOrigem() == vertice || a.getDestino() == vertice);
+            }
         }
         return vertice;
     }
 
     public void removeAresta(String nomeOrigem, String nomeDestino) {
-        Vertice origem = removeVertice(nomeOrigem);
-        Vertice destino = removeVertice(nomeDestino);
-        origem.getArestas().removeIf(a -> a.getDestino() == destino);
+        Vertice origem = encontraVertice(nomeOrigem);
+        Vertice destino = encontraVertice(nomeDestino);
+        if (origem != null && destino != null) {
+            origem.getArestas().removeIf(a -> a.getDestino() == destino);
+        }
     }
+
     public void traçarRota(String origem, String destino) {
         Vertice origemVertice = adicionaVertice(origem);
         Vertice destinoVertice = adicionaVertice(destino);
@@ -54,14 +60,14 @@ public class Grafo {
             predecessores.put(v, null);
         }
 
-        filaPrioridade.add(new Aresta(0,  "origemVertice"));
+        filaPrioridade.add(new Aresta(0, origemVertice, origemVertice));
 
         while (!filaPrioridade.isEmpty()) {
             Aresta arestaAtual = filaPrioridade.poll();
             Vertice verticeAtual = arestaAtual.getDestino();
             int distanciaAtual = arestaAtual.getDistancia();
 
-            if (!(distanciaMinima.get(verticeAtual) >= distanciaAtual)) {
+            if (distanciaMinima.get(verticeAtual) < distanciaAtual) {
                 continue;
             }
 
@@ -121,7 +127,6 @@ public class Grafo {
 
         System.out.println("Distância total percorrida: " + distanciaMinima.get(destinoVertice) + "m");
     }
-
 
     private Vertice encontraVertice(String nome) {
         for (Vertice v : vertices) {

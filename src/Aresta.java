@@ -1,24 +1,13 @@
 public class Aresta {
     private int distancia;
-    private  Vertice origem;
-    private  Vertice chegada;
+    private Vertice origem;
+    private Vertice destino;
 
-
-    public Aresta(int distancia, Vertice origem, Vertice chegada) {
+    public Aresta(int distancia, Vertice origem, Vertice destino) {
         this.distancia = distancia;
         this.origem = origem;
-        this.chegada = chegada;
+        this.destino = destino;
     }
-
-    public Aresta(int distancia, String origemVertice) {
-
-    }
-
-
-    public void setDistancia(int distancia) {
-        this.distancia = distancia;
-    }
-
 
     public int getDistancia() {
         return distancia;
@@ -28,12 +17,7 @@ public class Aresta {
         return origem;
     }
 
-    public Vertice getChegada() {
-        return chegada;
-    }
-
     public Vertice getDestino() {
-
-        return null;
+        return destino;
     }
 }
